@@ -31,7 +31,7 @@ padding:10px 30px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-z-index:1000;
+z-index:1150;
 background:rgba(0,0,0,.25);
 backdrop-filter:blur(15px);
 transition:.4s;
@@ -72,6 +72,98 @@ transition:.3s;
 .book-btn:hover{
 background:#D75A2E;
 transform:translateY(-3px);
+}
+
+.hamburger{
+display:none;
+flex-direction:column;
+justify-content:center;
+gap:6px;
+width:44px;
+height:44px;
+background:none;
+border:none;
+cursor:pointer;
+padding:0;
+z-index:1200;
+}
+
+.hamburger span{
+display:block;
+width:26px;
+height:3px;
+margin:0 auto;
+background:#fff;
+border-radius:3px;
+transition:.35s ease;
+}
+
+.hamburger.active span:nth-child(1){
+transform:translateY(9px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2){
+opacity:0;
+}
+
+.hamburger.active span:nth-child(3){
+transform:translateY(-9px) rotate(-45deg);
+}
+
+.nav-backdrop{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:1090;
+opacity:0;
+visibility:hidden;
+transition:opacity .35s ease;
+}
+
+.nav-backdrop.active{
+opacity:1;
+visibility:visible;
+}
+
+.mobile-nav-overlay{
+position:fixed;
+top:0;
+right:-85%;
+width:85%;
+max-width:340px;
+height:100vh;
+height:100dvh;
+background:#173B63;
+z-index:1100;
+padding:110px 35px 40px;
+box-shadow:-15px 0 45px rgba(0,0,0,.35);
+transition:right .4s cubic-bezier(.65,.05,.36,1);
+overflow-y:auto;
+}
+
+.mobile-nav-overlay.active{
+right:0;
+}
+
+.mobile-nav-overlay nav{
+display:flex;
+flex-direction:column;
+gap:4px;
+}
+
+.mobile-nav-overlay nav a{
+margin-left:0;
+color:#fff;
+font-size:20px;
+font-weight:600;
+padding:16px 4px;
+border-bottom:1px solid rgba(255,255,255,.12);
+}
+
+.mobile-nav-overlay nav a.book-btn{
+margin-top:25px;
+text-align:center;
+border-bottom:none;
 }
 
 .hero{
@@ -233,9 +325,21 @@ font-size:18px;
 
 }
 
-nav{
+header nav{
 
 display:none;
+
+}
+
+header > .book-btn{
+
+display:none;
+
+}
+
+.hamburger{
+
+display:flex;
 
 }
 
@@ -287,7 +391,63 @@ Book Now
 
 </a>
 
+<button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+<span></span>
+<span></span>
+<span></span>
+</button>
+
 </header>
+
+<div class="nav-backdrop" id="navBackdrop"></div>
+
+<div class="mobile-nav-overlay" id="mobileNavOverlay">
+
+<nav>
+
+<a href="#home">Home</a>
+
+<a href="#rooms">Rooms</a>
+
+<a href="#experience">Experiences</a>
+
+<a href="#gallery">Gallery</a>
+
+<a href="#reserve">Contact</a>
+
+<a href="https://wa.me/918432077786" class="book-btn">Book Now</a>
+
+</nav>
+
+</div>
+
+<script>
+(function(){
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNavOverlay');
+  const navBackdrop = document.getElementById('navBackdrop');
+
+  function toggleMobileNav(){
+    const isOpen = mobileNav.classList.toggle('active');
+    hamburgerBtn.classList.toggle('active', isOpen);
+    navBackdrop.classList.toggle('active', isOpen);
+    hamburgerBtn.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
+  function closeMobileNav(){
+    mobileNav.classList.remove('active');
+    hamburgerBtn.classList.remove('active');
+    navBackdrop.classList.remove('active');
+    hamburgerBtn.setAttribute('aria-expanded','false');
+    document.body.style.overflow = '';
+  }
+
+  hamburgerBtn.addEventListener('click', toggleMobileNav);
+  navBackdrop.addEventListener('click', closeMobileNav);
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+})();
+</script>
 
 <section class="hero" id="home">
 
@@ -1507,29 +1667,96 @@ body{margin:0}
 }
 
 @media(max-width:768px){
+
+    .experience-section{
+        padding:55px 0 60px;
+    }
+
+    .experience-header h2{
+        font-size:30px;
+    }
+
     .orbit-wrapper{
+        position:relative;
         aspect-ratio:auto;
         height:auto;
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:14px;
         width:100%;
-        max-width:100%;
+        max-width:420px;
+        display:block;
+        text-align:center;
+        margin:50px auto 0;
+        padding:0;
     }
-    .orbit-line{display:none;}
+
+    .orbit-line{
+        position:absolute;
+        top:45%;
+        left:50%;
+        width:150%;
+        height:auto;
+        transform:translate(-50%,-50%);
+        opacity:.3;
+    }
+
     .orbit-item{
+        display:none !important;
+    }
+
+    .orbit-item.active{
+        display:block !important;
         position:relative !important;
         left:auto !important;
         top:auto !important;
         transform:none !important;
-        transition:width .4s ease, height .4s ease, border .4s ease;
+        width:230px;
+        height:230px;
+        margin:0 auto;
+        border:6px solid rgba(255,255,255,.3);
+        box-shadow:0 25px 60px rgba(0,0,0,.55);
+        animation:circlePop .5s ease;
     }
+
+    @keyframes circlePop{
+        from{opacity:0; transform:scale(.82);}
+        to{opacity:1; transform:scale(1);}
+    }
+
     .experience-text{
-        position:relative;
-        left:auto; top:auto; transform:none;
-        width:90%; max-width:none;
-        margin:30px auto 0;
+        position:static !important;
+        left:auto !important;
+        top:auto !important;
+        transform:none !important;
+        width:100%;
+        max-width:380px;
+        margin:36px auto 0;
+        text-align:center;
+    }
+
+    .experience-text h3{
+        font-size:27px;
+        margin-bottom:14px;
+    }
+
+    .experience-text p{
+        font-size:15px;
+        line-height:1.7;
+    }
+}
+
+@media(max-width:420px){
+
+    .orbit-item.active{
+        width:190px;
+        height:190px;
+        border-width:5px;
+    }
+
+    .experience-text h3{
+        font-size:23px;
+    }
+
+    .experience-text p{
+        font-size:14px;
     }
 }
 </style>
